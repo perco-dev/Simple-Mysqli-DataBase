@@ -15,20 +15,14 @@ $db = new MysqliDb ('host', 'username', 'password', 'databaseName');
 Advanced initialization:
 ```PHP
 $db = new MysqliDb (Array (
-
-'host' => 'host',
-
-'username' => 'username',
-
-'password' => 'password',
-
-'db'=> 'databaseName',
-
-'port' => 3306,
-
-'prefix' => 'my_',
-
-'charset' => 'utf8'));
+  'host' => 'host',
+  'username' => 'username',
+  'password' => 'password',
+  'db'=> 'databaseName',
+  'port' => 3306,
+  'prefix' => 'my_',
+  'charset' => 'utf8')
+);
 ```
 table prefix, port and database charset params are optional. If no charset should be set charset, set it to null
 
@@ -46,22 +40,17 @@ If you need to get already created mysqliDb object from another class or functio
 ```PHP
 function init () {
 
-// db staying private here
-
-$db = new MysqliDb ('host', 'username', 'password', 'databaseName');
-
+  // db staying private here
+  $db = new MysqliDb ('host', 'username', 'password', 'databaseName');
+  
 }
 
 ...
 
 function myfunc () {
-
-// obtain db object created in init ()
-
-$db = MysqliDb::getInstance();
-
-...
-
+  // obtain db object created in init ()
+  $db = MysqliDb::getInstance();
+  ...
 }
 ```
 Objects mapping
@@ -72,12 +61,10 @@ dbObject.php is an object mapping library built on top of mysqliDb to provide mo
 
 Simple example
 ```PHP
-$data = Array ("login" => "admin",
-
-"firstName" => "John",
-
-"lastName" => 'Doe'
-
+$data = Array (
+  "login" => "admin",
+  "firstName" => "John",
+  "lastName" => 'Doe'
 );
 
 $id = $db->insert ('users', $data);
@@ -89,54 +76,34 @@ echo 'user was created. Id=' . $id;
 Insert with functions use
 ```PHP
 $data = Array (
-
-'login' => 'admin',
-
-'active' => true,
-
-'firstName' => 'John',
-
-'lastName' => 'Doe',
-
-'password' => $db->func('SHA1(?)',Array ("secretpassword+salt")),
-
-// password = SHA1('secretpassword+salt')
-
-'createdAt' => $db->now(),
-
-// createdAt = NOW()
-
-'expires' => $db->now('+1Y')
-
-// expires = NOW() + interval 1 year
-
-// Supported intervals [s]econd, [m]inute, [h]hour, [d]day, [M]onth, [Y]ear
-
+  'login' => 'admin',
+  'active' => true,
+  'firstName' => 'John',
+  'lastName' => 'Doe',
+  'password' => $db->func('SHA1(?)',Array ("secretpassword+salt")),
+  // password = SHA1('secretpassword+salt')
+  'createdAt' => $db->now(),
+  // createdAt = NOW()
+  'expires' => $db->now('+1Y')
+  // expires = NOW() + interval 1 year
+  // Supported intervals [s]econd, [m]inute, [h]hour, [d]day, [M]onth, [Y]ear
 );
-
 
 $id = $db->insert ('users', $data);
 
 if ($id)
-
-echo 'user was created. Id=' . $id;
-
+  echo 'user was created. Id=' . $id;
 else
-
-echo 'insert failed: ' . $db->getLastError();
-
+  echo 'insert failed: ' . $db->getLastError();
+```
 Insert with on duplicate key update
-
-$data = Array ("login" => "admin",
-
-"firstName" => "John",
-
-"lastName" => 'Doe',
-
-"createdAt" => $db->now(),
-
-"updatedAt" => $db->now(),
-
+```PHP
+$data = Array (
+  "login" => "admin",
+  "firstName" => "John",
+  "lastName" => 'Doe',
+  "createdAt" => $db->now(),
+  "updatedAt" => $db->now(),
 );
 
 $updateColumns = Array ("updatedAt");
@@ -146,41 +113,29 @@ $lastInsertId = "id";
 $db->onDuplicate($updateColumns, $lastInsertId);
 
 $id = $db->insert ('users', $data);
-
+```
 Insert multiple datasets at once
-
+```PHP
 $data = Array(
-
-Array ("login" => "admin",
-
-"firstName" => "John",
-
-"lastName" => 'Doe'
-
-),
-
-Array ("login" => "other",
-
-"firstName" => "Another",
-
-"lastName" => 'User',
-
-"password" => "very_cool_hash"
-
-)
-
+  Array (
+    "login" => "admin",
+    "firstName" => "John",
+    "lastName" => 'Doe'
+  ),
+  Array (
+    "login" => "other",
+    "firstName" => "Another",
+    "lastName" => 'User',
+    "password" => "very_cool_hash"
+  )
 );
 
 $ids = $db->insertMulti('users', $data);
 
 if(!$ids) {
-
-echo 'insert failed: ' . $db->getLastError();
-
+  echo 'insert failed: ' . $db->getLastError();
 } else {
-
-echo 'new users inserted with following id\'s: ' . implode(', ', $ids);
-
+  echo 'new users inserted with following id\'s: ' . implode(', ', $ids);
 }
 ```
 If all datasets only have the same keys, it can be simplified
